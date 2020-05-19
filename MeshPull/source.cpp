@@ -37,7 +37,7 @@ Define_Module(Device);
 long double  duplicatePacketCount = 0;
 int endedDev=0;
 float sumOfnumberOfMsg=0;
-int EndToEndAvg=0;
+float EndToEndSum=0;
 
 /* First element: current device number
  * Second element: required device number --> port number for required device
@@ -82,7 +82,7 @@ void Device::handleMessage(cMessage *msg)
     std::string token = msgHeader.substr(6,msgHeader.length());
     const long double sysTime = time(0);
     const long double sysTimeMS = sysTime*1000;
-    EndToEndAvg=(EndToEndAvg+(sysTimeMS-stod(token)))/2;
+    EndToEndSum=(EndToEndSum+(sysTimeMS-stod(token)));
 
     this->numberOfMsg++;
     /* Find the receiver device number. The two ending characters of the name
@@ -195,10 +195,12 @@ void Device::finish(){
     endedDev++;
     sumOfnumberOfMsg+=this->numberOfMsg;
     float avgOfnumberOfMsg=sumOfnumberOfMsg/10;
+    float EndToEndAvg=EndToEndSum/sumOfnumberOfMsg;
     if (endedDev == 10) {
         EV<<"duplicate Packet Count:" << duplicatePacketCount<<"\n";
         EV<<"sum of all messages in network:"<<sumOfnumberOfMsg<<"\n";
         EV<<"average of messages for each node:"<<avgOfnumberOfMsg<<"\n";
-        EV<<"average point to point time of messages:"<<EndToEndAvg;
+        EV<< "sum point to point time of messages:" << EndToEndSum<<"\n";
+        EV<< "average point to point time of messages:" << EndToEndAvg;
     }
 }

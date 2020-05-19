@@ -1,3 +1,4 @@
+#include <windows.h>
 
 #include <string.h>
 #include <list>
@@ -27,42 +28,39 @@ std::string delimiter = "G";
 /* This array shows whether a device of that number as the same as the index
  * has received the packet or not. */
 
-int EndToEndAvg=0;
+float EndToEndSum=0;
 void Device::initialize()
 {
+        this->flag=false;
+        //from device2 to device6
+        if (strcmp("device01", getName()) == 0) {
+            //Receiver node is device6
+                this->flag = 1;
 
-    this->flag=false;
-    //from device2 to device6
-    if (strcmp("device01", getName()) == 0) {
-        //Receiver node is device6
-            this->flag = 1;
+                cMessage *msg = new cMessage("MSG");
+                int n = gateSize("out");
 
-            cMessage *msg = new cMessage("MSG");
-            int n = gateSize("out");
-
-            for (int j = 0; j < n; j++)
-            {
-                cMessage *copy = msg->dup();
-                //
-                const long double sysTime = time(0);
-                const long double sysTimeMS = sysTime*1000;
-                std::string textMsg="MSG";
-                textMsg+=to_string(sysTimeMS);
-                copy -> setName(textMsg.c_str());
-                //
-                send(copy, "out", j);
-            }
-    }
-
+                for (int j = 0; j < n; j++)
+                {
+                    cMessage *copy = msg->dup();
+                    //
+                    const long double sysTime = time(0);
+                    const long double sysTimeMS = sysTime*1000;
+                    std::string textMsg="MSG";
+                    textMsg+=to_string(sysTimeMS);
+                    copy -> setName(textMsg.c_str());
+                    //
+                    send(copy, "out", j);
+                }
+        }
 }
 void Device::handleMessage(cMessage *msg)
 {
-
     std::string msgHeader=msg -> getName();
     std::string token = msgHeader.substr(msgHeader.find(delimiter)+1,msgHeader.length());
     const long double sysTime = time(0);
     const long double sysTimeMS = sysTime*1000;
-    EndToEndAvg=(EndToEndAvg+(sysTimeMS-stod(token)))/2;
+    EndToEndSum=(EndToEndSum+(sysTimeMS-stod(token)));
 
     this->numberOfMsg++;
     /* If the receiver does not have the message then sets its flag to true
@@ -96,11 +94,12 @@ void Device::finish(){
     endedDev++;
     sumOfnumberOfMsg+=this->numberOfMsg;
     float avgOfnumberOfMsg=sumOfnumberOfMsg/10;
+    float EndToEndAvg=EndToEndSum/sumOfnumberOfMsg;
     if (endedDev==10) {
         EV<<"duplicate Packet Count:" << duplicatePacketCount<<"\n";
         EV<<"sum of all messages in network:"<<sumOfnumberOfMsg<<"\n";
         EV<<"average of messages for each node:"<<avgOfnumberOfMsg<<"\n";
+        EV<< "sum point to point time of messages:" << EndToEndSum<<"\n";
         EV<< "average point to point time of messages:" << EndToEndAvg;
     }
-
 }
