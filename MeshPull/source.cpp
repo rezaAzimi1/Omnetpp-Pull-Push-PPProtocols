@@ -64,10 +64,10 @@ void Device::initialize()
         {
             cMessage *copy = msg -> dup();
             //
-            const long double sysTime = time(0);
-            const long double sysTimeMS = sysTime*1000;
+            simtime_t simt = simTime()*1000;
+            std::string simtStr=simt.str();
             std::string textMsg=msg -> getName();
-            textMsg+=to_string(sysTimeMS);
+            textMsg+=simtStr;
             copy -> setName(textMsg.c_str());
             //
 
@@ -78,11 +78,12 @@ void Device::initialize()
 
 void Device::handleMessage(cMessage *msg)
 {
+
     std::string msgHeader=msg -> getName();
     std::string token = msgHeader.substr(6,msgHeader.length());
-    const long double sysTime = time(0);
-    const long double sysTimeMS = sysTime*1000;
-    EndToEndSum=(EndToEndSum+(sysTimeMS-stod(token)));
+    simtime_t simtt = simTime()*1000;
+    std::string sysTimeMS=simtt.str();
+    EndToEndSum=(EndToEndSum+(stoi(sysTimeMS)-stoi(token)));
 
     this->numberOfMsg++;
     /* Find the receiver device number. The two ending characters of the name
@@ -123,10 +124,10 @@ void Device::handleMessage(cMessage *msg)
             // Send the message.
             cMessage *Gmsg = new cMessage(textMsg.c_str());
             //
-            const long double sysTime = time(0);
-            const long double sysTimeMS = sysTime*1000;
+            simtime_t simt = simTime()*1000;
+            std::string simtStr=simt.str();
             std::string textMsgGmsg=Gmsg -> getName();
-            textMsgGmsg+=to_string(sysTimeMS);
+            textMsgGmsg+=simtStr;
             Gmsg -> setName(textMsgGmsg.c_str());
             //
             send(Gmsg, "out", portMap[deviceIndex][senderIndex]);
@@ -150,11 +151,11 @@ void Device::handleMessage(cMessage *msg)
             // Send the "final message".
             cMessage *Fmsg = new cMessage(textMsg.c_str());
             //
-            const long double sysTime = time(0);
-            const long double sysTimeMS = sysTime*1000;
-            std::string textMsgFmsg=Fmsg -> getName();
-            textMsgFmsg+=to_string(sysTimeMS);
-            Fmsg -> setName(textMsgFmsg.c_str());
+            simtime_t simt = simTime()*1000;
+            std::string simtStr=simt.str();
+            std::string textMsgGmsg=Fmsg -> getName();
+            textMsgGmsg+=simtStr;
+            Fmsg -> setName(textMsgGmsg.c_str());
             //
             send(Fmsg, "out", portMap[deviceIndex][senderIndex]);
 
@@ -181,11 +182,11 @@ void Device::handleMessage(cMessage *msg)
             for(int j = 0; j < n; j++) {
                     cMessage *Hmsg = new cMessage(textMsg.c_str());
                     //
-                    const long double sysTime = time(0);
-                    const long double sysTimeMS = sysTime*1000;
-                    std::string textMsg=Hmsg -> getName();
-                    textMsg+=to_string(sysTimeMS);
-                    Hmsg -> setName(textMsg.c_str());
+                    simtime_t simt = simTime()*1000;
+                    std::string simtStr=simt.str();
+                    std::string textMsgGmsg=Hmsg -> getName();
+                    textMsgGmsg+=simtStr;
+                    Hmsg -> setName(textMsgGmsg.c_str());
                     //
                     send(Hmsg, "out", j);
             }
@@ -202,5 +203,6 @@ void Device::finish(){
         EV<<"average of messages for each node:"<<avgOfnumberOfMsg<<"\n";
         EV<< "sum point to point time of messages:" << EndToEndSum<<"\n";
         EV<< "average point to point time of messages:" << EndToEndAvg;
+
     }
 }

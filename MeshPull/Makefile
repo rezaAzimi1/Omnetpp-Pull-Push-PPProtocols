@@ -1,12 +1,12 @@
 #
-# OMNeT++/OMNEST Makefile for p2pMeshpull2
+# OMNeT++/OMNEST Makefile for p2pMeshpullV4
 #
 # This file was generated with the command:
 #  opp_makemake -f --deep -O out -I.
 #
 
 # Name of target to be created (-o option)
-TARGET = p2pMeshpull2$(D)$(EXE_SUFFIX)
+TARGET = p2pMeshpullV4$(D)$(EXE_SUFFIX)
 TARGET_DIR = .
 
 # User interface (uncomment one) (-u option)

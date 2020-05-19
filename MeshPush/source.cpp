@@ -44,10 +44,10 @@ void Device::initialize()
                 {
                     cMessage *copy = msg->dup();
                     //
-                    const long double sysTime = time(0);
-                    const long double sysTimeMS = sysTime*1000;
+                    simtime_t simt = simTime()*1000;
+                    std::string simtStr=simt.str();
                     std::string textMsg="MSG";
-                    textMsg+=to_string(sysTimeMS);
+                    textMsg+=simtStr;
                     copy -> setName(textMsg.c_str());
                     //
                     send(copy, "out", j);
@@ -58,9 +58,9 @@ void Device::handleMessage(cMessage *msg)
 {
     std::string msgHeader=msg -> getName();
     std::string token = msgHeader.substr(msgHeader.find(delimiter)+1,msgHeader.length());
-    const long double sysTime = time(0);
-    const long double sysTimeMS = sysTime*1000;
-    EndToEndSum=(EndToEndSum+(sysTimeMS-stod(token)));
+    simtime_t simtt = simTime()*1000;
+    std::string sysTimeMS=simtt.str();
+    EndToEndSum=(EndToEndSum+(stoi(sysTimeMS)-stoi(token)));
 
     this->numberOfMsg++;
     /* If the receiver does not have the message then sets its flag to true
@@ -74,10 +74,10 @@ void Device::handleMessage(cMessage *msg)
         for(int j = 0; j < n; j++) {
                 cMessage *copy = msg->dup();
                 //
-                const long double sysTime = time(0);
-                const long double sysTimeMS = sysTime*1000;
+                simtime_t simt = simTime()*1000;
+                std::string simtStr=simt.str();
                 std::string textMsg="MSG";
-                textMsg+=to_string(sysTimeMS);
+                textMsg+=simtStr;
                 copy -> setName(textMsg.c_str());
                 //
                 send(copy, "out", j);
@@ -101,5 +101,6 @@ void Device::finish(){
         EV<<"average of messages for each node:"<<avgOfnumberOfMsg<<"\n";
         EV<< "sum point to point time of messages:" << EndToEndSum<<"\n";
         EV<< "average point to point time of messages:" << EndToEndAvg;
+
     }
 }

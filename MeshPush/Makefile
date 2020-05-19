@@ -1,12 +1,12 @@
 #
-# OMNeT++/OMNEST Makefile for p2pMeshPushV3
+# OMNeT++/OMNEST Makefile for p2pMeshPushV4
 #
 # This file was generated with the command:
 #  opp_makemake -f --deep -O out -I.
 #
 
 # Name of target to be created (-o option)
-TARGET = p2pMeshPushV3$(D)$(EXE_SUFFIX)
+TARGET = p2pMeshPushV4$(D)$(EXE_SUFFIX)
 TARGET_DIR = .
 
 # User interface (uncomment one) (-u option)
